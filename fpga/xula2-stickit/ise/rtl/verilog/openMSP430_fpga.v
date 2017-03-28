@@ -144,6 +144,10 @@ wire               spi_miso;
 wire               spi_sck;
 wire               spi_ss;
 
+// Led Digits
+wire        [15:0] per_dout_led;
+wire         [7:0] led_so;
+
 // Others
 wire               reset_pin;
 
@@ -164,11 +168,21 @@ assign hw_uart_rxd = chan_io[21];
 alias alias1(ps2_clk, chanClk_io);
 alias alias2(ps2_data, chan_io[15]);
 
-// SPI master
-assign chan_io[3]  = spi_sck;
-assign spi_miso    = chan_io[18];
-assign chan_io[1]  = spi_mosi;
-assign chan_io[17] = spi_ss;
+// SPI master on PM2
+//assign chan_io[3]  = spi_sck;
+//assign spi_miso    = chan_io[18];
+//assign chan_io[1]  = spi_mosi;
+//assign chan_io[17] = spi_ss;
+
+// LED digits on PM2
+assign chan_io[3]  = led_so[6];
+assign chan_io[18] = led_so[4];
+assign chan_io[1]  = led_so[2];
+assign chan_io[17] = led_so[0];
+assign chan_io[0]  = led_so[7];
+assign chan_io[16] = led_so[5];
+assign chanClk_io  = led_so[3];
+assign chan_io[15] = led_so[1];
 
 //=============================================================================
 // 2)  CLOCK GENERATION
@@ -468,6 +482,19 @@ omsp_spi_master spi_master(
     .puc_rst    (puc_rst)
 );
 
+// LED digits
+omsp_led_digits led_digits(
+    .per_dout   (per_dout_led),
+    .so         (led_so),
+
+    .mclk       (mclk),
+    .per_addr   (per_addr),
+    .per_din    (per_din),
+    .per_en     (per_en),
+    .per_we     (per_we),
+    .puc_rst    (puc_rst)
+);
+
 //
 // Combine peripheral data buses
 //-------------------------------
@@ -478,6 +505,7 @@ assign per_dout = per_dout_dio      |
                   per_dout_uart2    |
                   per_dout_ps2      |
                   per_dout_tsc      |
+                  per_dout_led      |
                   per_dout_spi;
 //
 // Assign interrupts
