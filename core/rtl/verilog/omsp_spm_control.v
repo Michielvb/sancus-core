@@ -29,6 +29,7 @@ module omsp_spm_control(
   input  wire             [15:0] key_in,
   input  wire [KEY_IDX_SIZE-1:0] key_idx,
   output wire                    violation,
+  output wire							sm_executing,
   output wire                    spm_data_select_valid,
   output wire                    spm_key_select_valid,
   output reg              [15:0] spm_current_id,
@@ -107,6 +108,8 @@ end
 // keep track of the currently and previously executing SM
 wire [0:`NB_SPMS-1] spms_executing;
 wire [0:`NB_SPMS*16-1] spms_id;
+wire spm_executing;
+assign sm_executing = |spms_executing; 
 
 integer spm_k;
 always @(*)

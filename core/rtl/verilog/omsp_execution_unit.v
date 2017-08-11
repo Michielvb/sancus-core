@@ -62,6 +62,7 @@ module  omsp_execution_unit (
     scg1,                          // System clock generator 1. Turns off the SMCLK
     spm_violation,
     sm_busy,
+	 sm_executing,
 
 // INPUTs
     dbg_halt_st,                   // Halt/Run status from CPU
@@ -111,6 +112,7 @@ output              scg0;          // System clock generator 1. Turns off the DC
 output              scg1;          // System clock generator 1. Turns off the SMCLK
 output              spm_violation;
 output              sm_busy;
+output				  sm_executing;
 
 // INPUTs
 //=========
@@ -474,6 +476,7 @@ wire [15:0] sm_key_select;
 wire [15:0] sm_current_id;
 wire [15:0] sm_prev_id;
 wire        sm_violation;
+wire			sm_executing;
 
 wire [0:`SECURITY-1] sm_key;
 
@@ -524,6 +527,7 @@ omsp_spm_control #(
   .key_in                 (crypto_data_out),
   .key_idx                (sm_key_idx),
   .violation              (sm_violation),
+  .sm_executing			  (sm_executing),
   .spm_data_select_valid  (sm_data_select_valid),
   .spm_key_select_valid   (sm_key_select_valid),
   .spm_current_id         (sm_current_id),

@@ -228,6 +228,7 @@ wire          [3:0] irq_num;
 
 wire                spm_busy;
 wire                spm_violation_eu;
+wire					  sm_executing;
 wire                pmem_writing;
 
 `ifdef RESET_ON_VIOLATION
@@ -350,7 +351,8 @@ omsp_frontend frontend_0 (
     .wkup         (wkup),          // System Wake-up (asynchronous)
     .spm_busy     (spm_busy),
     .pmem_writing (pmem_writing),
-    .sm_violation (spm_violation_eu)
+    .sm_violation (spm_violation_eu),
+	 .sm_executing	(sm_executing)
 );
 
 
@@ -374,6 +376,7 @@ omsp_execution_unit execution_unit_0 (
     .scg1         (scg1),          // System clock generator 1. Turns off the SMCLK
     .spm_violation(spm_violation_eu),
     .sm_busy      (spm_busy),
+	 .sm_executing (sm_executing),
 
 // INPUTs
     .dbg_halt_st  (dbg_halt_st),   // Halt/Run status from CPU
