@@ -61,6 +61,7 @@ module  omsp_execution_unit (
     scg0,                          // System clock generator 1. Turns off the DCO
     scg1,                          // System clock generator 1. Turns off the SMCLK
     spm_violation,
+	 sm_exec_violation,
     sm_busy,
 	 sm_executing,
 
@@ -111,6 +112,7 @@ output              pc_sw_wr;      // Program counter software write
 output              scg0;          // System clock generator 1. Turns off the DCO
 output              scg1;          // System clock generator 1. Turns off the SMCLK
 output              spm_violation;
+output				  sm_exec_violation;
 output              sm_busy;
 output				  sm_executing;
 
@@ -528,6 +530,7 @@ omsp_spm_control #(
   .key_in                 (crypto_data_out),
   .key_idx                (sm_key_idx),
   .violation              (sm_violation),
+  .exec_violation			  (sm_exec_violation),
   .sm_executing			  (sm_executing),
   .spm_data_select_valid  (sm_data_select_valid),
   .spm_key_select_valid   (sm_key_select_valid),

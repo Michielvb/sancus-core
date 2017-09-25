@@ -31,6 +31,7 @@ module omsp_spm(
   output reg                     enabled,
   output wire                    executing,
   output wire                    violation,
+  output wire							exec_violation,
   output wire                    data_selected,
   output wire                    key_selected,
   output reg              [15:0] requested_data,
@@ -124,14 +125,14 @@ wire access_secret = eu_mb_en & (eu_mab >= secret_start) & (eu_mab < secret_end)
 wire mem_violation = (access_public & ~(enable_spm | verify_spm | executing)) |
                      (access_secret & ~exec_public) |
                      (access_public & eu_mb_wr);
-wire exec_violation = exec_public & ~exec_spm(prev_pc) & (pc != public_start);
+assign exec_violation = exec_public & ~exec_spm(prev_pc) & (pc != public_start);
 wire create_violation = check_new_spm &
                         (do_overlap(r12, r13, public_start, public_end));// |
                          //do_overlap(r12, r13, secret_start, secret_end) |
                          //do_overlap(r14, r15, public_start, public_end) |
                          //do_overlap(r14, r15, secret_start, secret_end));
 assign violation = enabled & (mem_violation | exec_violation | create_violation);
-assign executing = enabled & exec_public;
+assign executing = enabled & exec_public & ~exec_violation; 
 
 always @(posedge mclk)
 begin

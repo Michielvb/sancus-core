@@ -100,7 +100,7 @@ module  omsp_frontend (
     wkup,                          // System Wake-up (asynchronous)
     spm_busy,
     pmem_writing,
-    sm_violation,
+    sm_exec_violation,
 	 sm_executing
 );
 
@@ -159,7 +159,7 @@ input               wdt_wkup;      // Watchdog Wakeup
 input               wkup;          // System Wake-up (asynchronous)
 input               spm_busy;
 input               pmem_writing;
-input               sm_violation;
+input               sm_exec_violation;
 input					  sm_executing;
 
 
@@ -280,7 +280,7 @@ always @(posedge mclk or posedge puc_rst)
   if (puc_rst)  dbg_halt_st <= 1'b0;
   else          dbg_halt_st <= cpu_halt_cmd & (i_state_nxt==I_IDLE);
 
-// keep track of the PC of the current andd previous instructions for the SM
+// keep track of the PC of the current and previous instructions for the SM
 // logic.
 reg [15:0] current_inst_pc;
 reg [15:0] prev_inst_pc;
@@ -315,7 +315,7 @@ always @(posedge mclk or posedge puc_rst)
 reg sm_irq;
 always @(posedge mclk or posedge puc_rst)
   if (puc_rst) sm_irq <= 1'b0;
-  else         sm_irq <= sm_violation;
+  else         sm_irq <= sm_exec_violation;
 
 assign  irq_detect = (sm_irq | nmi_pnd | ((|irq | wdt_irq) & gie)) & ~cpu_halt_cmd & ~dbg_halt_st & (exec_done | (i_state==I_IDLE)) & ~sm_executing; // IRQ not detected if an sm is executing
 

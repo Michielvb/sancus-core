@@ -351,7 +351,7 @@ omsp_frontend frontend_0 (
     .wkup         (wkup),          // System Wake-up (asynchronous)
     .spm_busy     (spm_busy),
     .pmem_writing (pmem_writing),
-    .sm_violation (spm_violation_eu),
+    .sm_exec_violation (sm_exec_violation_eu),
 	 .sm_executing	(sm_executing)
 );
 
@@ -375,6 +375,7 @@ omsp_execution_unit execution_unit_0 (
     .scg0         (scg0),          // System clock generator 1. Turns off the DCO
     .scg1         (scg1),          // System clock generator 1. Turns off the SMCLK
     .spm_violation(spm_violation_eu),
+	 .sm_exec_violation (sm_exec_violation_eu),
     .sm_busy      (spm_busy),
 	 .sm_executing (sm_executing),
 

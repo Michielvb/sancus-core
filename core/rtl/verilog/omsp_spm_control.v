@@ -29,6 +29,7 @@ module omsp_spm_control(
   input  wire             [15:0] key_in,
   input  wire [KEY_IDX_SIZE-1:0] key_idx,
   output wire                    violation,
+  output wire							exec_violation,
   output wire							sm_executing,
   output wire                    spm_data_select_valid,
   output wire                    spm_key_select_valid,
@@ -52,6 +53,7 @@ wire [0:`NB_SPMS-1] spms_first_disabled;
 wire [0:`NB_SPMS-1] spms_enabled;
 // output of the SPM array. violations detected by the SPMs
 wire [0:`NB_SPMS-1] spms_violation;
+wire [0:`NB_SPMS-1] sms_exec_violation;
 
 wire [0:`NB_SPMS-1] spms_data_selected;
 wire [0:`NB_SPMS-1] spms_key_selected;
@@ -72,6 +74,7 @@ always @(posedge mclk or posedge puc_rst)
     next_id <= next_id + 16'h1;
 
 assign violation = |spms_violation || (next_id == 16'hfff0);
+assign exec_violation = |sms_exec_violation;
 
 generate
   genvar i;
@@ -166,6 +169,7 @@ omsp_spm #(
   .enabled              (spms_enabled),
   .executing            (spms_executing),
   .violation            (spms_violation),
+  .exec_violation			(sms_exec_violation),
   .data_selected        (spms_data_selected),
   .key_selected         (spms_key_selected),
   .requested_data       (spms_requested_data),
