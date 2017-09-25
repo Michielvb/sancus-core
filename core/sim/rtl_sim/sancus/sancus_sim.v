@@ -626,6 +626,8 @@ begin
     $display("* RAM: %5dB                *", `DMEM_SIZE);
     $display("******************************");
 
+    // Keeping the sim running might be useful in cases where LPM's are used
+    `ifdef RESET_ON_VIOLATION
     // finish on CPU halt or violation
     @(posedge r2[4] | sm_violation);
     error = sm_violation;
@@ -642,7 +644,8 @@ begin
      $display("|               SIMULATION PASSED               |");
       end
     $display(" ===============================================");
-    $finish;
+    $finish
+    `endif
 end
 
 endmodule

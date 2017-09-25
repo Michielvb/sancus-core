@@ -1,3 +1,5 @@
 build/
 *~
 *.swp
+fpga/xula2-stickit/ise/*
+
