@@ -83,7 +83,8 @@ module  omsp_register_file (
     reg_sr_wr,                    // Status register update for RETI instruction
     reg_sr_clr,                   // Status register clear for interrupts
     reg_incr,                     // Increment source register
-    scan_enable                   // Scan enable (active during scan shifting)
+    scan_enable,                  // Scan enable (active during scan shifting)
+	 sm_executing
 );
 
 // OUTPUTs
@@ -125,6 +126,7 @@ input               reg_sr_wr;    // Status register update for RETI instruction
 input               reg_sr_clr;   // Status register clear for interrupts
 input               reg_incr;     // Increment source register
 input               scan_enable;  // Scan enable (active during scan shifting)
+input					  sm_executing; // Protected module currently executing
 
 //=============================================================================
 // 1)  AUTOINCREMENT UNIT
@@ -204,19 +206,19 @@ omsp_clock_gate clock_gate_r2 (.gclk(mclk_r2),
                                .clk (mclk), .enable(r2_en), .scan_enable(scan_enable));
 
 `else                                                                            //      -- WITHOUT CLOCK GATING --
-wire        r2_c   = alu_stat_wr[0] ? alu_stat[0]          :
-                     r2_wr          ? reg_dest_val_in[0]   : r2[0];              // C
+wire        r2_c   = alu_stat_wr[0] 		? alu_stat[0]          :
+                     r2_wr          		? reg_dest_val_in[0]   : r2[0];              // C
 
-wire        r2_z   = alu_stat_wr[1] ? alu_stat[1]          :
-                     r2_wr          ? reg_dest_val_in[1]   : r2[1];              // Z
+wire        r2_z   = alu_stat_wr[1] 		? alu_stat[1]          :
+                     r2_wr          		? reg_dest_val_in[1]   : r2[1];              // Z
 
-wire        r2_n   = alu_stat_wr[2] ? alu_stat[2]          :
-                     r2_wr          ? reg_dest_val_in[2]   : r2[2];              // N
+wire        r2_n   = alu_stat_wr[2] 		? alu_stat[2]          :
+                     r2_wr          		? reg_dest_val_in[2]   : r2[2];              // N
 
-wire  [7:3] r2_nxt = r2_wr          ? reg_dest_val_in[7:3] : r2[7:3];
+wire  [7:3] r2_nxt = r2_wr & sm_executing ? reg_dest_val_in[7:3] : r2[7:3]; // Only an executing SM can write directly to SR
 
-wire        r2_v   = alu_stat_wr[3] ? alu_stat[3]          :
-                     r2_wr          ? reg_dest_val_in[8]   : r2[8];              // V
+wire        r2_v   = alu_stat_wr[3] 		? alu_stat[3]          :
+                     r2_wr          		? reg_dest_val_in[8]   : r2[8];              // V
 
 
 wire        mclk_r2 = mclk;
@@ -254,7 +256,7 @@ wire        mclk_r2 = mclk;
  
 always @(posedge mclk_r2 or posedge puc_rst)
   if (puc_rst)         r2 <= 16'h0000;
-  else if (reg_sr_clr) r2 <= 16'h0000;
+  else if (reg_sr_clr) r2 <= 16'h0008; // Enable nested interrupts
   else                 r2 <= {7'h00, r2_v, r2_nxt, r2_n, r2_z, r2_c} & r2_mask;
 
 assign status = {r2[8], r2[2:0]};

@@ -253,7 +253,8 @@ omsp_register_file register_file_0 (
     .reg_sr_clr   (reg_sr_clr),   // Status register clear for interrupts
     .reg_sr_wr    (reg_sr_wr),    // Status Register update for RETI instruction
     .reg_incr     (reg_incr),     // Increment source register
-    .scan_enable  (scan_enable)   // Scan enable (active during scan shifting)
+    .scan_enable  (scan_enable),  // Scan enable (active during scan shifting)
+	 .sm_executing (sm_executing)
 );
 
 
