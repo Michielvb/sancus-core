@@ -226,6 +226,10 @@
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="142"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="28"/>
     </file>
+    <file xil_pn:name="rtl/verilog/openmsp430/periph/omsp_led_digits.v" xil_pn:type="FILE_VERILOG">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="134"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="134"/>
+    </file>
     <file xil_pn:name="rtl/verilog/coregen/ram_8x5k.xise" xil_pn:type="FILE_ISE"/>
     <file xil_pn:name="rtl/verilog/coregen/rom_8x24k.xise" xil_pn:type="FILE_ISE"/>
     <file xil_pn:name="rtl/verilog/coregen/rom_8x16k.xise" xil_pn:type="FILE_ISE"/>
