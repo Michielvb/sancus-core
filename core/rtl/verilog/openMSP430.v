@@ -242,6 +242,7 @@ always @(posedge mclk or posedge puc_rst)
 wire do_reset_n = reset_n & ~spm_violation;
 `else
 wire do_reset_n = reset_n;
+wire spm_violation = spm_violation_eu; // Directly connect memory violations to the memory backbone
 `endif
 
 //=============================================================================
