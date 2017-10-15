@@ -265,7 +265,7 @@ openMSP430 openMSP430_0 (
     .pmem_wen     (pmem_wen),     // Program Memory write enable (low active) (optional)
     .puc_rst      (puc_rst),      // Main system reset
     .smclk_en     (smclk_en),     // SMCLK enable
-    //.spm_violation(spm_violation),
+    .spm_violation(spm_violation),
 
 // INPUTs
     .cpu_en       (1'b1),         // Enable CPU code execution (asynchronous)
@@ -482,6 +482,7 @@ omsp_spi_master spi_master(
     .puc_rst    (puc_rst)
 );
 
+wire led_en = per_en & ~spm_violation;
 // LED digits
 omsp_led_digits led_digits(
     .per_dout   (per_dout_led),
@@ -490,7 +491,7 @@ omsp_led_digits led_digits(
     .mclk       (mclk),
     .per_addr   (per_addr),
     .per_din    (per_din),
-    .per_en     (per_en),
+    .per_en     (led_en),
     .per_we     (per_we),
     .puc_rst    (puc_rst)
 );
@@ -512,6 +513,21 @@ assign per_dout = per_dout_dio      |
 //-------------------------------
 
 assign nmi        =  1'b0;
+//assign irq_bus    = {1'b0,         // Vector 13  (0xFFFA)
+//                     1'b0,         // Vector 12  (0xFFF8)
+//                     1'b0,         // Vector 11  (0xFFF6)
+//                     1'b0,         // Vector 10  (0xFFF4) - Watchdog -
+//                     irq_ta0,      // Vector  9  (0xFFF2)
+//                     irq_ta1,      // Vector  8  (0xFFF0)
+//                     irq_uart_rx,  // Vector  7  (0xFFEE)
+//                     irq_uart_tx,  // Vector  6  (0xFFEC)
+//                     irq_rx_ps2,   // Vector  5  (0xFFEA)
+//                     1'b0,         // Vector  4  (0xFFE8)
+//                     irq_port2,    // Vector  3  (0xFFE6)
+//                     irq_port1,    // Vector  2  (0xFFE4)
+//                     1'b0,         // Vector  1  (0xFFE2)
+//                     1'b0};        // Vector  0  (0xFFE0)
+
 assign irq_bus    = {1'b0,         // Vector 13  (0xFFFA)
                      1'b0,         // Vector 12  (0xFFF8)
                      1'b0,         // Vector 11  (0xFFF6)
@@ -519,13 +535,14 @@ assign irq_bus    = {1'b0,         // Vector 13  (0xFFFA)
                      irq_ta0,      // Vector  9  (0xFFF2)
                      irq_ta1,      // Vector  8  (0xFFF0)
                      irq_uart_rx,  // Vector  7  (0xFFEE)
-                     irq_uart_tx,  // Vector  6  (0xFFEC)
-                     irq_rx_ps2,   // Vector  5  (0xFFEA)
+                     irq_uart_tx,  // Vector  6  (0xFFEC) 
+                     1'b0,   		  // Vector  5  (0xFFEA)
                      1'b0,         // Vector  4  (0xFFE8)
                      irq_port2,    // Vector  3  (0xFFE6)
                      irq_port1,    // Vector  2  (0xFFE4)
                      1'b0,         // Vector  1  (0xFFE2)
                      1'b0};        // Vector  0  (0xFFE0)
+
 
 //
 // GPIO Function selection
